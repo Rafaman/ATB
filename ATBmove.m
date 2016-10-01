@@ -1,3 +1,9 @@
+%Non so se hai ascoltato l'audio 
+%comunque a voce ti dico delle cose che mi sono venute in mente per la
+%creatura e per il code 
+%Lunedì ci vediamo?A che ora?
+%E poi perchè Pietro usa solo la prima posizione dell'array?
+
 function ATBmove (mode, angolo, distance, servoDX, servoSX)
 
 %Creazione array
@@ -6,7 +12,7 @@ function ATBmove (mode, angolo, distance, servoDX, servoSX)
     angolo=zeros(1, 10);
     distance=zeros(1, 10);
     distance_tot=zeros(1, 10);
-    delta_time=zeros(1, 10);
+    time=zeros(1, 10);
     velocityReal=zeros(1, 10);
     velocityMax=2*pi*raggio_ruote;
     velocityDX=zeros(1, 5);
@@ -16,13 +22,13 @@ function ATBmove (mode, angolo, distance, servoDX, servoSX)
     
     for i=1:1:5
         
-        distance_tot(i)=distance(i)+2*pi*asse_ruote*angolo(1)/360;
-        delta_time(i)=distance_tot(i)/velocityMax;
-        velocityReal(i)=distance(i)/delta_time(i);
+        distance_tot(i)=distance(1)+2*pi*asse_ruote*angolo(1)/360;
+        time(i)=distance_tot(i)/velocityMax;
+        velocityReal(i)=distance(1)/time(i);
         
     end
        
-    delta_time(3)=(angolo(1)*2*pi*(asse_ruote/2)/360)/velocityMax;
+    time(3)=(angolo(1)*2*pi*(asse_ruote/2)/360)/velocityMax;
     
 %Trasformazione velocità in modalità servo
 
@@ -39,17 +45,17 @@ function ATBmove (mode, angolo, distance, servoDX, servoSX)
     
 %Creazione modi 
     
-    mode(1)=[delta_time(1), velocityDX(1), velocitySX(1)];
-    mode(2)=[delta_time(2), velocityDX(2), velocitySX(2)];
-    mode(3)=[delta_time(3), velocityDX(3), velocitySX(3)];
-    mode(4)=[delta_time(4), velocityDX(4), velocitySX(4)];
-    mode(5)=[delta_time(5), velocityDX(5), velocitySX(5)];
+    mode(1)=[time(1), velocityDX(1), velocitySX(1)];
+    mode(2)=[time(2), velocityDX(2), velocitySX(2)];
+    mode(3)=[time(3), velocityDX(3), velocitySX(3)];
+    mode(4)=[time(4), velocityDX(4), velocitySX(4)];
+    mode(5)=[time(5), velocityDX(5), velocitySX(5)];
     
 %Movimento
     
     tic(cronometro);
     
-    while cronometro~=delta_time
+    while cronometro~=time
         
         writePosition(servoDX, velocityDX);
         writePosition(servoSX, velocitySX);

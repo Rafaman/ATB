@@ -1,68 +1,99 @@
-%Non so se hai ascoltato l'audio 
-%comunque a voce ti dico delle cose che mi sono venute in mente per la
-%creatura e per il code 
-%Lunedì ci vediamo?A che ora?
-%E poi perchè Pietro usa solo la prima posizione dell'array?
-
 function ATBmove (mode, angolo, distance, servoDX, servoSX)
 
 %Creazione array
     
-    mode=zeros(1, 5);
-    angolo=zeros(1, 10);
-    distance=zeros(1, 10);
+    modalita=zeros(1, 6);
+    raggio_curva_piccola=0;
     distance_tot=zeros(1, 10);
     time=zeros(1, 10);
+    time_giro=zeros(1, 10);
     velocityReal=zeros(1, 10);
     velocityMax=2*pi*raggio_ruote;
-    velocityDX=zeros(1, 5);
-    velocitySX=zeros(1, 5);
+    velocityDX=zeros(1, 10);
+    velocitySX=zeros(1, 10);
+    mode=a;
     
 %Calcolo tempo e velocità
     
-    for i=1:1:5
+    for i=1:1:10
         
-        distance_tot(i)=distance(1)+2*pi*asse_ruote*angolo(1)/360;
+        distance_tot(i)=distance(i)+2*pi*asse_ruote*abs(angolo(i))/360;
         time(i)=distance_tot(i)/velocityMax;
-        velocityReal(i)=distance(1)/time(i);
+        velocityReal(i)=2*pi*raggio_curva_piccola*angolo(i)/360/time(i);
+        time_giro(i)=(2*pi*raggio_curva_piccola*angolo(i)/360)/velocityReal(i);
+        
+        if velocityReal(i)>0
+            
+            velocityDX(1, i)=velocityReal(i)/velocityMax*0.5+0.5;
+            velocitySX(1, i)=1;
+            
+            velocityDX(5, i)=velocityReal(i)/velocityMax*0.5+0.5;
+            velocitySX(5, i)=0;
+            
+        elseif velocityReal(i)<0
+            
+            velocityDX(2, i)=1;
+            velocitySX(2, i)=velocityReal(i)/velocityMax*0.5+0.5;
+            
+            velocityDX(6, i)=0;
+            velocitySX(6, i)=velocityReal(i)/velocityMax*0.5+0.5;
+            
+        else
+            
+            velocityDX(1, i)=1;
+            velocitySX(1, i)=1;
+            
+            velocityDX(2, i)=1;
+            velocitySX(2, i)=1;
+            
+            velocityDX(5, i)=0;
+            velocitySX(5, i)=0;
+            
+            velocityDX(6, i)=0;
+            velocitySX(6, i)=0;
         
     end
        
     time(3)=(angolo(1)*2*pi*(asse_ruote/2)/360)/velocityMax;
+    time(4)=(angolo(1)*2*pi*(asse_ruote/2)/360)/velocityMax;
     
-%Trasformazione velocità in modalità servo
-
-    velocityDX(1)=velocityReal(1)/velocityMax;
-    velocitySX(1)=1;
-    velocitySX(2)=velocityReal(2)/velocityMax;
-    velocityDX(2)=1;
     velocityDX(3)=1;
-    velocitySX(3)=0;
-    velocityDX(4)=velocityReal(4)/velocityMax;
-    velocitySX(4)=0;
-    velocitySX(5)=velocityReal(5)/velocityMax;
-    velocityDX(5)=0;
+    velocitySX(3)=0; 
+    
+    velocityDX(4)=0;
+    velocitySX(4)=1; 
     
 %Creazione modi 
     
-    mode(1)=[time(1), velocityDX(1), velocitySX(1)];
-    mode(2)=[time(2), velocityDX(2), velocitySX(2)];
-    mode(3)=[time(3), velocityDX(3), velocitySX(3)];
-    mode(4)=[time(4), velocityDX(4), velocitySX(4)];
-    mode(5)=[time(5), velocityDX(5), velocitySX(5)];
+    modalita(1)=[time(1), time_giro(1), velocityDX(1), velocitySX(1)];
+    modalita(2)=[time(2), time_giro(2), velocityDX(2), velocitySX(2)];
+    modalita(3)=[time(3), time_giro(3), velocityDX(3), velocitySX(3)];
+    modalita(4)=[time(4), time_giro(4), velocityDX(4), velocitySX(4)];
+    modalita(5)=[time(5), time_giro(5), velocityDX(5), velocitySX(5)];
+    modalita(6)=[time(6), time_giro(6), velocityDX(6), velocitySX(6)];
     
 %Movimento
     
-    tic(cronometro);
+    cronometro=tic;
+    cronometro_giro=tic;
     
-    while cronometro~=time
+    while cronometro<time(a)
         
-        writePosition(servoDX, velocityDX);
-        writePosition(servoSX, velocitySX);
+        while cronometro_giro<time_giro(a) && time_giro(a)~=0
+        
+            writePosition(servoDX, velocityDX(a));
+            writePosition(servoSX, velocitySX(a));          
+            
+        end
+        
+        toc(cronometro_giro);
+                        
+        writePosition(servoDX, 1);
+        writePosition(servoSX, 1);
         
     end
     
-    toc;
+    toc(cronometro);
     
 end
     

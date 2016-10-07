@@ -11,7 +11,6 @@ function ATBmove (mode, angolo, distance, servoDX, servoSX)
     velocityMax=2*pi*raggio_ruote;
     velocityDX=zeros(1, 10);
     velocitySX=zeros(1, 10);
-    mode=a;
     
 %Calcolo tempo e velocità
     
@@ -33,10 +32,10 @@ function ATBmove (mode, angolo, distance, servoDX, servoSX)
         elseif velocityReal(i)<0
             
             velocityDX(2, i)=1;
-            velocitySX(2, i)=velocityReal(i)/velocityMax*0.5+0.5;
+            velocitySX(2, i)=0.5-abs(velocityReal(i))/velocityMax*0.5;
             
             velocityDX(6, i)=0;
-            velocitySX(6, i)=velocityReal(i)/velocityMax*0.5+0.5;
+            velocitySX(6, i)=0.5-abs(velocityReal(i))/velocityMax*0.5;
             
         else
             
@@ -51,6 +50,8 @@ function ATBmove (mode, angolo, distance, servoDX, servoSX)
             
             velocityDX(6, i)=0;
             velocitySX(6, i)=0;
+            
+        end
         
     end
        
@@ -71,31 +72,52 @@ function ATBmove (mode, angolo, distance, servoDX, servoSX)
     modalita(4)=[time(4), time_giro(4), velocityDX(4), velocitySX(4)];
     modalita(5)=[time(5), time_giro(5), velocityDX(5), velocitySX(5)];
     modalita(6)=[time(6), time_giro(6), velocityDX(6), velocitySX(6)];
+    modalita(7)=[time(7), time_giro(7), velocityDX(7), velocitySX(7)];
+    modalita(8)=[time(8), time_giro(8), velocityDX(8), velocitySX(8)];
     
 %Movimento
     
     cronometro=tic;
     cronometro_giro=tic;
     
-    while cronometro<time(a)
+    while cronometro<time(mode)
         
-        while cronometro_giro<time_giro(a) && time_giro(a)~=0
+        while cronometro_giro<time_giro(mode) && time_giro(mode)~=0
         
-            writePosition(servoDX, velocityDX(a));
-            writePosition(servoSX, velocitySX(a));          
+            writePosition(servoDX, velocityDX(mode));
+            writePosition(servoSX, velocitySX(mode));
+            
+            if modo==7 || modo==8
+                
+                writePosition(servoDX, velocityDX(0.75));
+                writePosition(servoSX, velocitySX(0.75));
+                
+            end
             
         end
         
         toc(cronometro_giro);
                         
-        writePosition(servoDX, 1);
-        writePosition(servoSX, 1);
+        switch modo
+            
+            case 1; 2; 7; 8; 
+                
+                writePosition(servoDX, velocityDX(1));
+                writePosition(servoSX, velocitySX(1));
+                
+            case 5; 6; 
+                
+                writePosition(servoDX, velocityDX(0));
+                writePosition(servoSX, velocitySX(0));
         
+        end
     end
     
     toc(cronometro);
     
 end
+
+
     
     
     

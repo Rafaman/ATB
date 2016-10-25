@@ -80,10 +80,17 @@ function ATBmove (mode, angolo, distance, servoDX, servoSX)
     cronometro=tic;
     cronometro_giro=tic;
     
-    while cronometro<time(mode)
+    time_cronometro=toc(cronometro);
+    
+    while time_cronometro<time(mode)
         
-        while cronometro_giro<time_giro(mode) && time_giro(mode)~=0
+        cronometro2=tic;
+        time_cronometro_giro=toc(cronometro_giro);        
         
+        while time_cronometro_giro<time_giro(mode) && time_giro(mode)~=0
+        
+            cronometro_giro2=tic;
+
             writePosition(servoDX, velocityDX(mode));
             writePosition(servoSX, velocitySX(mode));
             
@@ -93,6 +100,9 @@ function ATBmove (mode, angolo, distance, servoDX, servoSX)
                 writePosition(servoSX, velocitySX(0.75));
                 
             end
+            
+            time_cronometro_giro2=toc(cronometro_giro2);
+            time_cronometro_giro=time_cronometro_giro+time_cronometro_giro2;
             
         end
         
@@ -111,6 +121,10 @@ function ATBmove (mode, angolo, distance, servoDX, servoSX)
                 writePosition(servoSX, velocitySX(0));
         
         end
+        
+        time_cronometro2=toc(cronometro2);
+        time_cronometro=time_cronometro+time_cronometro2;  
+        
     end
     
     toc(cronometro);

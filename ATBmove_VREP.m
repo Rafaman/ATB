@@ -97,8 +97,8 @@ for a=1:1:rig
 
             cronometro_giro2=tic; 
 
-            vrep.simxSetJointTargetVelocity(clientIDdouble, jointHandleFDX, velocityDX(mode), vrep.simx_opmode_blocking);
-            vrep.simxSetJointTargetVelocity(clientIDdouble, jointHandleFSX, velocitySX(mode), vrep.simx_opmode_blocking);
+            vrep.simxSetJointTargetVelocity(clientIDdouble, jointHandleFDX, velocityDX(mode, a), vrep.simx_opmode_blocking);
+            vrep.simxSetJointTargetVelocity(clientIDdouble, jointHandleFSX, velocitySX(mode, a), vrep.simx_opmode_blocking);
 
             if modo==7 || modo==8
 

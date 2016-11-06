@@ -22,39 +22,41 @@ function ATBmove (mode, angolo, distance, servoDX, servoSX)
         velocityReal(i)=2*pi*raggio_curva_piccola*angolo(i)/360/time(i);
         time_giro(i)=(2*pi*raggio_curva_piccola*angolo(i)/360)/velocityReal(i);
         
-        if velocityReal(i)>0
-            
-            velocityDX(1, i)=velocityReal(i)/velocityMax*0.5+0.5;
-            velocitySX(1, i)=1;
-            
-            velocityDX(5, i)=velocityReal(i)/velocityMax*0.5+0.5;
-            velocitySX(5, i)=0;
-            
-        elseif velocityReal(i)<0
-            
-            velocityDX(2, i)=1;
-            velocitySX(2, i)=0.5-abs(velocityReal(i))/velocityMax*0.5;
-            
-            velocityDX(6, i)=0;
-            velocitySX(6, i)=0.5-abs(velocityReal(i))/velocityMax*0.5;
-            
-        else
-            
-            velocityDX(1, i)=1;
-            velocitySX(1, i)=1;
-            
-            velocityDX(2, i)=1;
-            velocitySX(2, i)=1;
-            
-            velocityDX(5, i)=0;
-            velocitySX(5, i)=0;
-            
-            velocityDX(6, i)=0;
-            velocitySX(6, i)=0;
-            
-        end
+     if velocityReal(1)>0
+
+		velocityDX(1, i)=velocityReal(i)/velocityMax*0.5+0.5;
+        velocitySX(1, i)=1;            
+		velocityDX(7, i)=velocityReal(i)/velocityMax*0.5+0.5;
+        velocitySX(7, i)=1;
+   		velocityDX(2, i)=velocityReal(i)/velocityMax*0.5+0.5;
+        velocitySX(2, i)=1;
+   		velocityDX(8, i)=1;    
+		velocitySX(8, i)=velocityReal(i)/velocityMax*0.5+0.5;
+
+	elseif velocityReal(i)<0
+
+		velocityDX(5, i)=0.5;
+		velocitySX(5, i)=0.5-abs(velocityReal(i))/velocityMax*0.5;
+        velocityDX(6, i)=0.5;
+		velocitySX(6, i)=0.5-abs(velocityReal(i))/velocityMax*0.5;          
         
-    end
+	else
+
+		velocityDX(1, i)=1;
+		velocitySX(1, i)=1;           
+		velocityDX(2, i)=1;
+        velocitySX(2, i)=1;        
+		velocityDX(5, i)=0;
+		velocitySX(5, i)=0;          
+		velocityDX(6, i)=0;            
+		velocitySX(6, i)=0; 
+		velocityDX(7, i)=1;            
+		velocitySX(7, i)=1;
+		velocityDX(8, i)=1;            
+		velocitySX(8, i)=1;       
+
+    end       
+
        
     time(3)=(angolo(1)*2*pi*(asse_ruote/2)/360)/velocityMax;
     time(4)=(angolo(1)*2*pi*(asse_ruote/2)/360)/velocityMax;
@@ -94,13 +96,13 @@ function ATBmove (mode, angolo, distance, servoDX, servoSX)
 
                 cronometro_giro2=tic;
 
-                writePosition(servoDX, velocityDX(mode));
-                writePosition(servoSX, velocitySX(mode));
+                writePosition(servoDX, velocityDX(mode, a));
+                writePosition(servoSX, velocitySX(mode, a));
 
                 if modo==7 || modo==8
 
-                    writePosition(servoDX, velocityDX(0.75));
-                    writePosition(servoSX, velocitySX(0.75));
+                    writePosition(servoDX, 0.75);
+                    writePosition(servoSX, 0.75);
 
                 end
 
@@ -115,13 +117,13 @@ function ATBmove (mode, angolo, distance, servoDX, servoSX)
 
                 case 1; 2; 7; 8; 
 
-                    writePosition(servoDX, velocityDX(1));
-                    writePosition(servoSX, velocitySX(1));
+                    writePosition(servoDX, 1);
+                    writePosition(servoSX, 1);
 
                 case 5; 6; 
 
-                    writePosition(servoDX, velocityDX(0));
-                    writePosition(servoSX, velocitySX(0));
+                    writePosition(servoDX, 0);
+                    writePosition(servoSX, 0);
 
             end
 

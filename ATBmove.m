@@ -2,19 +2,20 @@ function ATBmove (mode, angolo, distance, servoDX, servoSX)
 
 %Creazione array
     
+    [~, rig]=size(distance);
     modalita=zeros(1, 6);
     raggio_curva_piccola=0;
-    distance_tot=zeros(1, 10);
-    time=zeros(1, 10);
-    time_giro=zeros(1, 10);
-    velocityReal=zeros(1, 10);
+    distance_tot=zeros(1, rig);
+    time=zeros(1, rig);
+    time_giro=zeros(1, rig);
+    velocityReal=zeros(1, rig);
     velocityMax=2*pi*raggio_ruote;
-    velocityDX=zeros(1, 10);
-    velocitySX=zeros(1, 10);
+    velocityDX=zeros(1, rig);
+    velocitySX=zeros(1, rig);
     
 %Calcolo tempo e velocità
     
-    for i=1:1:10
+    for i=1:1:rig
         
         distance_tot(i)=distance(i)+2*pi*asse_ruote*abs(angolo(i))/360;
         time(i)=distance_tot(i)/velocityMax;
@@ -76,58 +77,71 @@ function ATBmove (mode, angolo, distance, servoDX, servoSX)
     modalita(8)=[time(8), time_giro(8), velocityDX(8), velocitySX(8)];
     
 %Movimento
-    
-    cronometro=tic;
-    cronometro_giro=tic;
-    
-    time_cronometro=toc(cronometro);
-    
-    while time_cronometro<time(mode)
-        
-        cronometro2=tic;
-        time_cronometro_giro=toc(cronometro_giro);        
-        
-        while time_cronometro_giro<time_giro(mode) && time_giro(mode)~=0
-        
-            cronometro_giro2=tic;
+  
+    for a=1:1:rig
 
-            writePosition(servoDX, velocityDX(mode));
-            writePosition(servoSX, velocitySX(mode));
-            
-            if modo==7 || modo==8
-                
-                writePosition(servoDX, velocityDX(0.75));
-                writePosition(servoSX, velocitySX(0.75));
-                
+        cronometro=tic;
+        cronometro_giro=tic;
+
+        time_cronometro=toc(cronometro);
+
+        while time_cronometro<time(mode)
+
+            cronometro2=tic;
+            time_cronometro_giro=toc(cronometro_giro);        
+
+            while time_cronometro_giro<time_giro(mode) && time_giro(mode)~=0
+
+                cronometro_giro2=tic;
+
+                writePosition(servoDX, velocityDX(mode));
+                writePosition(servoSX, velocitySX(mode));
+
+                if modo==7 || modo==8
+
+                    writePosition(servoDX, velocityDX(0.75));
+                    writePosition(servoSX, velocitySX(0.75));
+
+                end
+
+                time_cronometro_giro2=toc(cronometro_giro2);
+                time_cronometro_giro=time_cronometro_giro+time_cronometro_giro2;
+
             end
+
+            toc(cronometro_giro);
+
+            switch modo
+
+                case 1; 2; 7; 8; 
+
+                    writePosition(servoDX, velocityDX(1));
+                    writePosition(servoSX, velocitySX(1));
+
+                case 5; 6; 
+
+                    writePosition(servoDX, velocityDX(0));
+                    writePosition(servoSX, velocitySX(0));
+
+            end
+
+            time_cronometro2=toc(cronometro2);
+            time_cronometro=time_cronometro+time_cronometro2;  
+
+        end
+
+        toc(cronometro);
+        
+        ATBobst();
+        ATBarena();
+        
+        if ATBobst()==1 || ATBarena()==1
             
-            time_cronometro_giro2=toc(cronometro_giro2);
-            time_cronometro_giro=time_cronometro_giro+time_cronometro_giro2;
+            break;
             
         end
-        
-        toc(cronometro_giro);
-                        
-        switch modo
-            
-            case 1; 2; 7; 8; 
-                
-                writePosition(servoDX, velocityDX(1));
-                writePosition(servoSX, velocitySX(1));
-                
-            case 5; 6; 
-                
-                writePosition(servoDX, velocityDX(0));
-                writePosition(servoSX, velocitySX(0));
-        
-        end
-        
-        time_cronometro2=toc(cronometro2);
-        time_cronometro=time_cronometro+time_cronometro2;  
-        
-    end
     
-    toc(cronometro);
+    end
     
 end
 

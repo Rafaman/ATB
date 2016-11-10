@@ -135,10 +135,10 @@ for a=1:1:rig
 
     toc(cronometro);
     
-    ATBobst();
-    ATBarena();
+    ATBckobstacle_VREP();
+    ATBckarena_VREP();
     
-    if ATBobst()==1 || ATBarena()==1
+    if ATBckobstacle()==1 || ATBckarena()==1
         
         break;
         

@@ -134,10 +134,10 @@ function ATBmove (mode, angolo, distance, servoDX, servoSX)
 
         toc(cronometro);
         
-        ATBobst();
-        ATBarena();
+        ATBckobstacle();
+        ATBckarena();
         
-        if ATBobst()==1 || ATBarena()==1
+        if ATBckobstacle()==1 || ATBckarena()==1
             
             break;
             

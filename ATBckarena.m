@@ -6,37 +6,34 @@ function ATBckarena (arduino)
     pixelY=480;
     soglia_rumore_grigio=10;
     image=imread('prova.png');
-    grayMin={128, 128, 128};
-    grayMax={220, 220, 220};
+    grayMin=[128 128 128];
+    grayMax=[220 220 220];
+    gray=zeros(pixelY, pixelX);
     imageLogic=image>soglia_rumore_grigio;
     imageCorrect=bwareaopen(imageLogic, soglia_rumore_grigio);    
     
-    for a=1:1:255
+    for a=1:1:pixelY
         
-        for b=1:1:255
+        for b=1:1:pixelX
             
-            for c=1:1:255
-                
-                if grayMin<=image(a, b, c)<=grayMax
-                    
-                    gray(a, b, c)=image(a, b, c);
-                    
-                end
-                
+            if grayMin<=image(a, b)<=grayMax
+
+                gray(a, b)=image(a, b);
+
             end
-            
+
         end
         
     end
-    
+
     [riga, colonna]=find(gray(1:pixelX/2, :));
     
     xa=round(mean(riga));
     ya=round(mean(colonna));
     
-    [riga2, colonna2]=find(gray(pixelX/2:pixelX, :));
+    [riga2, colonna2]=find(gray(pixelX/2+1:pixelX, :));
     
-    xb=roun(mean(riga2));
+    xb=round(mean(riga2));
     yb=round(mean(colonna2));
     
     coefficiente_angolare=yb-ya/xb-xa;
@@ -47,7 +44,7 @@ function ATBckarena (arduino)
         mode=3;
         
     else
-        
+       
         mode=4;
         
     end
